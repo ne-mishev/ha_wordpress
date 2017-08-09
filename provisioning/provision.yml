@@ -1,5 +1,8 @@
 ---
 - hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
   tasks:
     - name: ensure ntpd is at the latest version
       yum: pkg=ntp state=latest
