@@ -20,9 +20,6 @@ ANSIBLE_RAW_SSH_ARGS = []
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   cluster.each_with_index do |(hostname, info), index|
-    (1..index-1) do |hostname|
-      ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=#{ENV["VAGRANT_DOTFILE_PATH"]}/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
-    end
     config.vm.define hostname do |cfg|
 	cfg.vm.provider :VAGRANT_VM_PROVIDER do |vb, override|
         override.vm.box = "centos/7"
@@ -33,7 +30,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.name = hostname
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
         end #end cfg
-
+      
+      ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=#{ENV["VAGRANT_DOTFILE_PATH"]}/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
       # provision nodes with ansible
       if index == cluster.size - 1
         cfg.vm.provision :ansible do |ansible|
@@ -109,4 +107,3 @@ end #end vagrant
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
-end
