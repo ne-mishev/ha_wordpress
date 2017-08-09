@@ -5,14 +5,56 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
-Vagrant.configure("2") do |config|
+
+VAGRANTFILE_API_VERSION = "2"
+
+cluster = {
+  "web-1" => { :ip => "10.0.10.11",  :cpus => 1, :mem => 1024 },
+  "web-2"  => { :ip => "10.0.10.12", :cpus => 1, :mem => 1024 },
+  "proxy-1"   => { :ip => "10.0.10.10", :cpus => 1, :mem => 1024 },
+}
+
+VAGRANT_VM_PROVIDER = "virtualbox"
+ANSIBLE_RAW_SSH_ARGS = []
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  cluster.each_with_index do |(hostname, info), index|
+    (1..index-1) do |hostname|
+      ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=#{ENV["VAGRANT_DOTFILE_PATH"]}/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
+    end
+    config.vm.define hostname do |cfg|
+	cfg.vm.provider :VAGRANT_VM_PROVIDER do |vb, override|
+        override.vm.box = "centos/7"
+        override.vm.box_url = "https://vagrantcloud.com/centos/boxes/7/versions/1707.01/providers/virtualbox.box"
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+        override.vm.hostname = hostname
+
+        vb.name = hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
+        end #end cfg
+
+      # provision nodes with ansible
+      if index == cluster.size - 1
+        cfg.vm.provision :ansible do |ansible|
+
+          ansible.inventory_path = "provisioning/hosts"
+          ansible.playbook = "provisioning/provision.yml"
+          ansible.limit = 'all'# "#{info[:ip]}" # Ansible hosts are identified by ip
+	  ansible.raw_ssh_args = ANSIBLE_RAW_SSH_ARGS
+        end # end provision
+      end #end if
+    end # end config
+  end #end cluster
+end #end vagrant
+
+
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "centos/7"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
