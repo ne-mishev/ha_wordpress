@@ -21,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   cluster.each_with_index do |(hostname, info), index|
     config.vm.define hostname do |cfg|
-	cfg.vm.provider :VAGRANT_VM_PROVIDER do |vb, override|
+	cfg.vm.provider :virtualbox do |vb, override|
         override.vm.box = "centos/7"
         override.vm.box_url = "https://vagrantcloud.com/centos/boxes/7/versions/1707.01/providers/virtualbox.box"
         override.vm.network :private_network, ip: "#{info[:ip]}"
@@ -31,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on" ]
         end #end cfg
       
-      ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=#{ENV["VAGRANT_DOTFILE_PATH"]}/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
+      ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=.vagrant/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
       # provision nodes with ansible
       if index == cluster.size - 1
         cfg.vm.provision :ansible do |ansible|
