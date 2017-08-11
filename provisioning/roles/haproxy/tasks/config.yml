@@ -1,0 +1,11 @@
+---
+
+- name: HAPROXY | haproxy.cfg
+  template: src=roles/haproxy/templates/haproxy.j2 dest=/etc/haproxy/haproxy.cfg
+  register: result
+
+- name: HAPROXY | restart HAProxy
+  service:
+    name: haproxy
+    state: reloaded 
+  when: result|changed

@@ -1,0 +1,17 @@
+[root@centosbox ~]# /sbin/vboxconfig
+vboxdrv.sh: Stopping VirtualBox services.
+vboxdrv.sh: Building VirtualBox kernel modules.
+This system is not currently set up to build kernel modules (system extensions).
+Running the following commands should set the system up correctly:
+
+  yum install gcc make
+  yum install kernel-devel-3.10.0-514.26.2.el7.x86_64
+
+There were problems setting up VirtualBox.  To re-start the set-up process, run
+  /sbin/vboxconfig
+as root.
+
+
+##############################################################################################
+
+

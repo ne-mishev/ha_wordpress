@@ -1,0 +1,10 @@
+---
+- name: NGINX | Deploy web app
+  template: src=roles/nginx/templates/index.j2 dst=/usr/share/nginx/html/index.html
+  register: result
+
+- name: NGINX | Reload NGINX
+  service:
+    name: nginx
+    state: reloaded
+  when: result|changed

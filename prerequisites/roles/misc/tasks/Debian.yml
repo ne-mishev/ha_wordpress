@@ -1,0 +1,18 @@
+---
+- name: get uname -r
+  command: uname -r
+  register: uname
+- debug: msg="{{ uname.stdout}}"  
+
+- name: Install common software requirements
+  ignore_errors: yes
+  apt: pkg={{ item }} state=present
+  with_items:
+    - git
+    - vim
+    - gcc
+    - make
+    - linux-headers-{{ uname.stdout}}
+
+- name: configure virtualbox
+  command: /sbin/vboxconfig 
