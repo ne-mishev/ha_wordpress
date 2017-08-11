@@ -34,6 +34,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ANSIBLE_RAW_SSH_ARGS << "-o IdentityFile=.vagrant/machines/#{hostname}/#{VAGRANT_VM_PROVIDER}/private_key"
       # provision nodes with ansible
       if index == cluster.size - 1
+	cfg.vm.network "forwarded_port", guest: 80, host: 8080
         cfg.vm.provision :ansible do |ansible|
 
           ansible.inventory_path = "provisioning/hosts"
@@ -68,7 +69,7 @@ end #end vagrant
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  #config.vm.network "forwarded_port", guest: 80, host: 80, host_ip: "10.0.10.10"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.

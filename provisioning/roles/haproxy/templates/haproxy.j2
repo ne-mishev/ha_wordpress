@@ -50,7 +50,7 @@ listen haproxy3-monitoring *:8080                #Haproxy Monitoring run on port
     stats realm Haproxy\ Statistics
     stats auth user:nginx            #User and Password for login to the monitoring dashboard
     stats admin if TRUE
-    default_backend app-main                    #This is optionally for monitoring backend
+    default_backend app-helloworld                    #This is optionally for monitoring backend
  
 #---------------------------------------------------------------------
 # FrontEnd Configuration
