@@ -1,0 +1,16 @@
+cache_valid_time: 3600
+
+letsencrypt_user: "letsencrypt"
+letsencrypt_version: "0.10.1"
+letsencrypt_certs:
+  - domains:
+      - 'hello-world.hopto.org'
+letsencrypt_haproxy_certs:
+  - 'hello-world.hopto.org.pem'
+letsencrypt_data_dir: "/etc/letsencrypt"
+letsencrypt_haproxy_cert_template: "haproxy.pem.j2"
+letsencrypt_haproxy_cert_dir: "/etc/ssl/certs"
+letsencrypt_domain: "{{ item.domains.0 }}"
+letsencrypt_admin_email: georgi.mishev@protonmail.com
+letsencrypt_ssl_certificate: "{{ letsencrypt_data_dir }}/live/{{ letsencrypt_domain }}/fullchain.pem"
+letsencrypt_ssl_certificate_key: "{{ letsencrypt_data_dir }}/live/{{ letsencrypt_domain }}/privkey.pem"
