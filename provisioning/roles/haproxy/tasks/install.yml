@@ -1,0 +1,11 @@
+---
+
+- name: HAPROXY | Installing HAProxy
+  yum:
+    name: haproxy
+    state: latest
+ 
+- name: HAPROXY | Starting HAProxy
+  service:
+    name: haproxy
+    state: started
