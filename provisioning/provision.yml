@@ -1,13 +1,27 @@
 ---
+# Apply tasks to all hosts
 - hosts: all
   become: yes
   become_user: root
   become_method: sudo
   tasks:
-    - name: ensure ntpd is at the latest version
-      yum: pkg=ntp state=latest
-      notify:
-      - restart ntpd
-  handlers:
-    - name: restart ntpd
-      service: name=ntpd state=restarted
+    - name: ALL | /etc/hosts
+      template: src=templates/hosts.j2 dest=/etc/hosts
+
+
+
+# Apply tasks to web servers
+- hosts: web
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - nginx
+
+# Apply tasks to loadbalancer
+- hosts: proxy
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - haproxy

@@ -1,0 +1,9 @@
+ip:
+  web1: 10.0.10.11
+  web2: 10.0.10.12
+  proxy1: 10.0.10.10
+
+hostname:
+  web1: web-1
+  web2: web-2
+  proxy1: proxy-1
