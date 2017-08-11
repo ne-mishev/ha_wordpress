@@ -1,15 +1,5 @@
 ---
-
-- name: Install common software requirements
-  ignore_errors: yes
-  yum: pkg={{ item }} state=present
-  with_items:
-    - epel-release
-    - git
-    - vim
-    - gcc
-    - make
-    - kernel-devel
-
-- name: configure virtualbox
-  command: /sbin/vboxconfig 
+ - include: Debian.yml
+   when: ansible_os_family == 'Debian'
+ - include: RedHat.yml
+   when: ansible_os_family == 'RedHat'
