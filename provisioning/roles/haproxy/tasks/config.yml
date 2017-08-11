@@ -8,4 +8,4 @@
   service:
     name: haproxy
     state: reloaded 
-  when: result|skipped
+  when: result|changed
