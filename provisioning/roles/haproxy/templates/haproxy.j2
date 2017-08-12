@@ -50,22 +50,56 @@ listen haproxy3-monitoring *:8080                #Haproxy Monitoring run on port
     stats realm Haproxy\ Statistics
     stats auth user:nginx            #User and Password for login to the monitoring dashboard
     stats admin if TRUE
-    default_backend app-helloworld                    #This is optionally for monitoring backend
+    default_backend {{ letsencrypt_domain }}-backend                    #This is optionally for monitoring backend
  
 #---------------------------------------------------------------------
 # FrontEnd Configuration
 #---------------------------------------------------------------------
-frontend helloworld
-    bind *:80
-    option http-server-close
-    option forwardfor
-    default_backend app-helloworld
- 
+#frontend helloworld
+#    bind *:80
+#    option http-server-close
+#    option forwardfor
+#    default_backend app-helloworld
+frontend helloworld-http
+    bind {{ ip.proxy-1 }}:80
+   # acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+   # use_backend letsencrypt-backend if letsencrypt-acl
+   option http-server-close
+   option forwardfor 
+   default_backend redirect-backend
+
+backend redirect-backend
+    redirect scheme https 
 #---------------------------------------------------------------------
 # BackEnd roundrobin as balance algorithm
 #---------------------------------------------------------------------
-backend app-helloworld
-    balance roundrobin                                     #Balance algorithm
-    option httpchk HEAD / HTTP/1.1\r\nHost:\ localhost    #Check the server application is up and healty - 200 status code
-    server web-1 10.0.10.11:80 check                 #Nginx1 
-    server web-2 10.0.10.12:80 check                 #Nginx2
+#backend app-helloworld
+#    balance roundrobin                                     #Balance algorithm
+#    option httpchk HEAD / HTTP/1.1\r\nHost:\ localhost    #Check the server application is up and healty - 200 status code
+#    server web-1 10.0.10.11:80 check                 #Nginx1 
+#    server web-2 10.0.10.12:80 check                 #Nginx2
+
+{% if haproxy_certs %}
+frontend helloworld-https
+    option forwardfor
+    option http-server-close
+    option httpclose
+
+    bind {{ ip.proxy-1 }}:443 ssl {% for cert in haproxy_certs %}crt {{ cert}} {% endfor %}
+
+    http-response set-header Strict-Transport-Security max-age=16000000;\ includeSubDomains;\ preload
+    http-response set-header X-Frame-Options DENY
+    {% for domain in haproxy_domains %}
+
+    use_backend {{ domain.name }}-backend if { ssl_fc_sni {{ domain.name }} }
+    {% endfor %}
+
+
+{% for domain in haproxy_domains %}
+backend {{ domain.name }}-backend
+    server www-{{ hostname.web-1 }} {{ ip.web-1 }}:80 check
+    server www-{{ hostname.web-2 }} {{ ip.web-2 }}:80 check
+
+
+{% endfor %}
+{% endif %}
