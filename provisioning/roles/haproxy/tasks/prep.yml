@@ -48,6 +48,7 @@
 - git:
     repo: 'https://github.com/greenhost/certbot-haproxy.git'
     dest: /srv/checkout
+    clone: yes
     update: no
     register: result
 
