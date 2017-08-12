@@ -45,6 +45,13 @@
     name: six
     state: latest
 
+- git:
+    repo: 'https://github.com/greenhost/certbot-haproxy.git'
+    dest: /srv/checkout
+    update: no
+    register: result
+
 - name: Install Letsencrypt
-  pip:
-    name: git+https://github.com/greenhost/certbot-haproxy.git
+  shell:
+    command: /usr/bin/pip install /srv/checkout/certbot-haproxy/
+    when: result|changed
