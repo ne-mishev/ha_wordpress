@@ -8,6 +8,10 @@
     - gcc-c++
     - openssl
     - openssl-devel
+    - git
+    - curl
+    - wget
+    - tcpdump
     - python-devel
     - libffi-devel
 
@@ -42,6 +46,5 @@
     state: latest
 
 - name: Install Letsencrypt {{ letsencrypt_version }}
-  pip:
-    name: certbot
-    version: "{{ letsencrypt_version }}"
+- pip:
+    name: git+https://github.com/greenhost/certbot-haproxy.git

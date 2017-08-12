@@ -1,7 +1,7 @@
 cache_valid_time: 3600
 
 letsencrypt_user: "letsencrypt"
-letsencrypt_version: "0.10.1"
+letsencrypt_version: "0.14.1"
 letsencrypt_certs:
   - domains:
       - 'hello-world.hopto.org'

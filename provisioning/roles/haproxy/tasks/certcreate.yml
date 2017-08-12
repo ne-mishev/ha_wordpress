@@ -5,7 +5,8 @@
      - "letsencrypt_certs is defined"
 
 - name: Create letsencrypt certs
-  shell: "certbot certonly -n --standalone -d {{ letsencrypt_domain }} --text --agree-tos --email {{ letsencrypt_admin_email }} --post-hook='cat {{ letsencrypt_ssl_certificate }} {{ letsencrypt_ssl_certificate_key }} > {{ letsencrypt_haproxy_cert_dir }}/{{ letsencrypt_domain }}.pem' --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges http"
+#  shell: "certbot certonly -n --standalone -d {{ letsencrypt_domain }} --text --agree-tos --email {{ letsencrypt_admin_email }} --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring"
+  shell: "certbot certonly -d {{ letsencrypt_domain }} --text --agree-tos --email {{ letsencrypt_admin_email }} --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring"
   with_items: "{{ letsencrypt_certs }}"
 
 - set_fact:
