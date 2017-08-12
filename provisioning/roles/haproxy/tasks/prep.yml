@@ -1,9 +1,10 @@
 - yum: name={{ item }}
+  ignore_errors: yes
   with_items:
     - binutils
     - make
     - gcc
-    - g++
+    - gcc-c++
     - openssl
     - libssl-dev
     - python-dev
