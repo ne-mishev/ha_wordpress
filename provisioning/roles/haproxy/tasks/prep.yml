@@ -46,5 +46,5 @@
     state: latest
 
 - name: Install Letsencrypt
-- pip:
+  pip:
     name: git+https://github.com/greenhost/certbot-haproxy.git
