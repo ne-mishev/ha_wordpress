@@ -1,6 +1,7 @@
 - yum: name={{ item }}
   ignore_errors: yes
   with_items:
+    - epel-release
     - binutils
     - make
     - gcc
@@ -8,7 +9,6 @@
     - openssl
     - openssl-devel
     - python-devel
-    - python2-pip
     - libffi-devel
 
 - name: Add user {{ letsencrypt_user }}
@@ -18,7 +18,7 @@
 
 - name: Install python-pip
   yum:
-    name: python-pip
+    name: python2-pip
     state: present
 
 - name: Update python pip
