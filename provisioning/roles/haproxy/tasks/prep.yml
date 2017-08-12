@@ -44,15 +44,17 @@
   pip:
     name: six
     state: latest
-
-- git:
+- name: Clone certbot-haproxy git
+  git:
     repo: 'https://github.com/greenhost/certbot-haproxy.git'
-    dest: /srv/checkout
+    dest: /srv/checkout/certbot-haproxy
     clone: yes
     update: no
   register: result
 
+- name: Fix certbot compatibility issues for RHEL Based Distros
+  template: src=roles/haproxy/templates/constants.j2 dest=/srv/checkout/certbot-haproxy/certbot_haproxy/constants.py
+
 - name: Install Letsencrypt
-  shell:
-    command: /usr/bin/pip install /srv/checkout/certbot-haproxy/
-    when: result|changed
+  command: /usr/bin/pip install /srv/checkout/certbot-haproxy/
+  when: result|changed
