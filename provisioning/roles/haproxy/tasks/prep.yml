@@ -6,9 +6,10 @@
     - gcc
     - gcc-c++
     - openssl
-    - libssl-dev
-    - python-dev
-    - libffi-dev
+    - openssl-devel
+    - python-devel
+    - python2-pip
+    - libffi-devel
 
 - name: Add user {{ letsencrypt_user }}
   user:
