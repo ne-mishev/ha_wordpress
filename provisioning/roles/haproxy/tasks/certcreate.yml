@@ -6,8 +6,11 @@
 
 - name: Create letsencrypt certs
 #  shell: "certbot certonly -n --standalone -d {{ letsencrypt_domain }} --text --agree-tos --email {{ letsencrypt_admin_email }} --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring"
-  shell: "certbot certonly -d {{ letsencrypt_domain }} --text --agree-tos --email {{ letsencrypt_admin_email }} --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring"
+  shell: certbot run --authenticator certbot-haproxy:haproxy-authenticator --installer certbot-haproxy:haproxy-installer --domain {{ letsencrypt_domain }} --register-unsafely-without-email --agree-tos
   with_items: "{{ letsencrypt_certs }}"
+
+- set_fact:
+    good_to_go: https
 
 - set_fact:
     haproxy_certs: "{{ letsencrypt_haproxy_certs }}"
