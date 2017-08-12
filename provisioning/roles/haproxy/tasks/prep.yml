@@ -45,6 +45,6 @@
     name: six
     state: latest
 
-- name: Install Letsencrypt {{ letsencrypt_version }}
+- name: Install Letsencrypt
 - pip:
     name: git+https://github.com/greenhost/certbot-haproxy.git
