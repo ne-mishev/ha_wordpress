@@ -50,7 +50,7 @@
     dest: /srv/checkout
     clone: yes
     update: no
-    register: result
+  register: result
 
 - name: Install Letsencrypt
   shell:
