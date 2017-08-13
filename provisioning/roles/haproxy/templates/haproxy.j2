@@ -13,7 +13,7 @@ global
  
     # turn on stats unix socket
     stats socket /var/lib/haproxy/stats
- 
+    tune.ssl.default-dh-param 2048 
 #---------------------------------------------------------------------
 # common defaults that all the 'listen' and 'backend' sections will
 # use if not designated in their block
@@ -35,7 +35,6 @@ defaults
     timeout http-keep-alive 10s
     timeout check           10s
     maxconn                 3000
- 
 #---------------------------------------------------------------------
 #HAProxy Monitoring Config
 #---------------------------------------------------------------------
@@ -62,35 +61,17 @@ listen haproxy3-monitoring *:8080                #Haproxy Monitoring run on port
 #    default_backend app-helloworld
 frontend helloworld-http
    bind *:80
-   # acl letsencrypt-acl path_beg /.well-known/acme-challenge/
-   # use_backend letsencrypt-backend if letsencrypt-acl
+   acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+   use_backend letsencrypt-backend if letsencrypt-acl
    option http-server-close
    option forwardfor 
-{% if good_to_go == "https" %}
    default_backend redirect-backend
-{% else %}
-    default_backend {{ letsencrypt_domain }}-backend
-{% endif %}
-
-{% if good_to_go == "https" %}
-backend redirect-backend
-    redirect scheme https 
-{% endif %}
-#---------------------------------------------------------------------
-# BackEnd roundrobin as balance algorithm
-#---------------------------------------------------------------------
-#backend app-helloworld
-#    balance roundrobin                                     #Balance algorithm
-#    option httpchk HEAD / HTTP/1.1\r\nHost:\ localhost    #Check the server application is up and healty - 200 status code
-#    server web-1 10.0.10.11:80 check                 #Nginx1 
-#    server web-2 10.0.10.12:80 check                 #Nginx2
-{% if good_to_go == "https" %}
 frontend helloworld-https
     option forwardfor
     option http-server-close
     option httpclose
 
-    bind *:443 ssl {% for cert in haproxy_certs %}crt {{ cert}} {% endfor %}
+    bind *:443 ssl crt {{ letsencrypt_haproxy_cert_dir }}/haproxy.pem
 
     http-response set-header Strict-Transport-Security max-age=16000000;\ includeSubDomains;\ preload
     http-response set-header X-Frame-Options DENY
@@ -99,8 +80,14 @@ frontend helloworld-https
     use_backend {{ domain.name }}-backend if { ssl_fc_sni {{ domain.name }} }
     {% endfor %}
 
+#---------------------------------------------------------------------
+# BackEnd Configuration
+#---------------------------------------------------------------------
 
-{% endif %}
+backend redirect-backend
+    redirect scheme https
+backend letsencrypt-backend
+   server letsencrypt 127.0.0.1:54321
 
 {% for domain in haproxy_domains %}
 backend {{ domain.name }}-backend

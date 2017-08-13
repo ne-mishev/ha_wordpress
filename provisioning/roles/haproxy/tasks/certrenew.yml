@@ -1,4 +1,19 @@
-- name: "Add cron task for letsencrypt renew"
+---
+- name: CERTBOT | Create renew script
+  template: 
+    src: roles/haproxy/templates/renew.sh.j2
+    dest: /usr/local/bin/renew.sh
+    owner: root
+    mode: 0744
+
+- name: CERTBOY | Ammend config for renewal
+  lineinfile:
+    path: /etc/letsencrypt/renewal/{{ letsencrypt_domain }}.conf
+    regexp: '^http01_port'
+    line: 'http01_port = 54321'
+
+
+- name: CERTBOT | Add cron task for letsencrypt renew
   cron:
     name: "letsencrypt renew"
     minute: "30"
@@ -6,4 +21,4 @@
     weekday: "1"
     cron_file: "letsencrypt"
     user: "root"
-    job: "/usr/local/bin/certbot renew --renew-hook '/etc/init.d/haproxy reload' > /dev/null"
+    job: "/usr/bin/certbot renew --renew-hook '/usr/local/bin/renew.sh' >> /var/log/le-renewal.log"

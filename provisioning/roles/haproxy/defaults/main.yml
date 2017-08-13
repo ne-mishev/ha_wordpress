@@ -8,8 +8,7 @@ letsencrypt_certs:
 letsencrypt_haproxy_certs:
   - 'hello-world.hopto.org.pem'
 letsencrypt_data_dir: "/etc/letsencrypt"
-letsencrypt_haproxy_cert_template: "haproxy.pem.j2"
-letsencrypt_haproxy_cert_dir: "/etc/ssl/certs"
+letsencrypt_haproxy_cert_dir: "/etc/haproxy/certs"
 letsencrypt_domain: "hello-world.hopto.org"
 letsencrypt_admin_email: georgi.mishev@protonmail.com
 letsencrypt_ssl_certificate: "{{ letsencrypt_data_dir }}/live/{{ letsencrypt_domain }}/fullchain.pem"

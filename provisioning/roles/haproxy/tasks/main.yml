@@ -1,7 +1,6 @@
 ---
 - include: prep.yml
-- include: install.yml
-- include: config.yml
 - include: certcreate.yml
+- include: install.yml
 - include: config.yml
 - include: certrenew.yml
