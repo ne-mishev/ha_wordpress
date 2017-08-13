@@ -1,3 +1,4 @@
 # ha_hello_world
 
-Deploying a HA web application with nginx and haproxy
+Automatic deployment of a HA SSL web application with Vagrant boxes and Ansible provisioning
+http://hello-world.hopto.org/
