@@ -64,19 +64,13 @@ frontend helloworld-http
    bind *:80
    # acl letsencrypt-acl path_beg /.well-known/acme-challenge/
    # use_backend letsencrypt-backend if letsencrypt-acl
-   acl is_certbot path_beg -i /.well-known/acme-challenge/
    option http-server-close
    option forwardfor 
-   use_backend certbot if is_certbot
 {% if good_to_go == "https" %}
    default_backend redirect-backend
 {% else %}
     default_backend {{ letsencrypt_domain }}-backend
 {% endif %}
-backend certbot
-    log global
-    mode http
-    server certbot 127.0.0.1:8000
 
 {% if good_to_go == "https" %}
 backend redirect-backend

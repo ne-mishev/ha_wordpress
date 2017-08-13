@@ -20,41 +20,5 @@
     name: "{{ letsencrypt_user }}"
     shell: /bin/bash
 
-- name: Install python-pip
-  yum:
-    name: python2-pip
-    state: present
-
-- name: Update python pip
-  pip:
-    name: pip
-    state: latest
-
-- name: Update python requests
-  pip:
-    name: requests
-    state: latest
-
-- name: Update python setuptools
-  pip:
-    name: setuptools
-    state: latest
-
-- name: Update python six
-  pip:
-    name: six
-    state: latest
-- name: Clone certbot-haproxy git
-  git:
-    repo: 'https://github.com/greenhost/certbot-haproxy.git'
-    dest: /srv/checkout/certbot-haproxy
-    clone: yes
-    update: no
-  register: result
-
-- name: Fix certbot compatibility issues for RHEL Based Distros
-  template: src=roles/haproxy/templates/constants.j2 dest=/srv/checkout/certbot-haproxy/certbot_haproxy/constants.py
-
-- name: Install Letsencrypt
-  command: /usr/bin/pip install /srv/checkout/certbot-haproxy/
-  when: result|changed
+- name: Install Certbot
+  yum: name=certbot state=present
