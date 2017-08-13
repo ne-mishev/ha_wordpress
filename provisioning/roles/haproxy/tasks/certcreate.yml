@@ -1,4 +1,9 @@
 ---
+- name: CERTBOT | Chech if cert already exists
+  stat:
+    path: /etc/letsencrypt/live/{{ letsencrypt_domain }}
+  register: certdir
+    
 - assert:
     that:
      - "letsencrypt_admin_email is defined"
@@ -7,9 +12,7 @@
 - name: Create letsencrypt certs
   shell: certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d {{ letsencrypt_domain }} --register-unsafely-without-email --agree-tos
   with_items: "{{ letsencrypt_certs }}"
-
-- set_fact:
-    good_to_go: https
+  when: not certdir.stat.isdir
 
 - set_fact:
     haproxy_certs: "{{ letsencrypt_haproxy_certs }}"
@@ -18,11 +21,24 @@
   file:
     path: /etc/haproxy/certs
     state: directory
-  register: result
+
+- name: HAPROXY | Prepare to build HAProxy cert file
+  copy:
+    src: /etc/letsencrypt/live/{{ letsencrypt_domain }}/fullchain.pem
+    dest: /etc/haproxy/certs/fullchain.pem
+    remote_src: true
+
+- name: HAPROXY | Prepare to build HAProxy cert file
+  copy: 
+    src: /etc/letsencrypt/live/{{ letsencrypt_domain }}/privkey.pem
+    dest: /etc/haproxy/certs/privkey.pem
+    remote_src: true
 
 - name: HAPROXY | Build HAProxy cert file
-  command: /usr/bin/cat /etc/letsencrypt/live/{{ letsencrypt_domain }}/fullchain.pem /etc/letsencrypt/live/{{ letsencrypt_domain }}/privkey.pem > /etc/haproxy/certs/{{ letsencrypt_domain }}.pem
-  when: result|changed
+  assemble:
+    src: /etc/haproxy/certs/
+    dest: /etc/haproxy/certs/haproxy.pem
+    remote_src: true
 
 - name: HAPROXY | Set secure attributes to HAProxy cert file
   file:

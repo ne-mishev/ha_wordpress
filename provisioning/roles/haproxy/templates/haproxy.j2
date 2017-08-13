@@ -85,7 +85,7 @@ frontend helloworld-https
 #---------------------------------------------------------------------
 
 backend redirect-backend
-    redirect scheme https
+    redirect scheme https code 301 if !{ ssl_fc }
 backend letsencrypt-backend
    server letsencrypt 127.0.0.1:54321
 
