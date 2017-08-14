@@ -1,6 +1,7 @@
 # ha_hello_world
 
 Automatic deployment of a HA SSL (with Let'sEncrypt certificate) web application with Vagrant boxes and Ansible provisioning
+
 DEMO: http(s)://hello-world.hopto.org/
 
 Prerequisites (non-automated tasks):
@@ -9,12 +10,15 @@ Prerequisites (non-automated tasks):
 3. Make sure the haproxy host will be accessible from the internet on port 80 during provisioning*
 
 All three steps are required for successful SSL certificate creation. 
+
 *Let'sEncrypt challenges certificates by bringing up a web server listening on port 80
 
 If you are going to run this on a Linux physical box/VM you can use the "prerequisites" playbook to make sure you have everyting needed to bring up the vagrant boxes and configure them. To run the playbook, simply execute:
 
 [anon@centosbox ha_hello_world]$ git clone git@github.com:ne-mishev/ha_hello_world.git
+
 [anon@centosbox ha_hello_world]$ cd ha_hello_world/
+
 [anon@centosbox ha_hello_world]$ ansible-playbook -i "localhost," -c local prerequisites/prep.yml
 
 "Prerequisite" playbook has been testeon on CentOS 7 and Debian 9. Naturally you need to have git and ansible installed before running it.
@@ -26,6 +30,7 @@ Once prerequisites are done, you need to change some variables and you are good 
  - letsencrypt_default_domain:
 
 Now we are all good. Just run:
+
 [anon@centosbox ha_hello_world]$ vagrant up
 
 This will bring up the boxes and provision them.
