@@ -35,6 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # provision nodes with ansible
       if index == cluster.size - 1
 	cfg.vm.network "forwarded_port", guest: 80, host: 8080
+	cfg.vm.network "forwarded_port", guest: 443, host: 8443
         cfg.vm.provision :ansible do |ansible|
 
           ansible.inventory_path = "provisioning/hosts"

@@ -1,0 +1,30 @@
+---
+- name: CERTBOT | Install prerequisite packages
+  yum: 
+    name: "{{ item }}"
+    state: present
+  ignore_errors: yes
+  with_items:
+    - epel-release
+    - binutils
+    - make
+    - gcc
+    - gcc-c++
+    - openssl
+    - openssl-devel
+    - git
+    - curl
+    - wget
+    - tcpdump
+    - python-devel
+    - libffi-devel
+
+- name: CERTBOT | Add user {{ letsencrypt_user }}
+  user:
+    name: "{{ letsencrypt_user }}"
+    shell: /bin/bash
+
+- name: CERTBOT | Install Certbot
+  yum: 
+    name: certbot
+    state: present

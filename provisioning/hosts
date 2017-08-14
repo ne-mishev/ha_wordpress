@@ -1,7 +1,7 @@
 [web]
-web-1 ansible_ssh_host=10.0.10.11
-web-2 ansible_ssh_host=10.0.10.12
+web-1 ansible_ssh_host="{{ ip.web1 }}"
+web-2 ansible_ssh_host="{{ ip.web2 }}"
 
 [proxy]
-proxy-1 ansible_ssh_host=10.0.10.10
+proxy-1 ansible_ssh_host="{{ ip.proxy1 }}"
 

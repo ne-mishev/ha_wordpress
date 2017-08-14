@@ -1,0 +1,17 @@
+cache_valid_time: 3600
+
+letsencrypt_user: "letsencrypt"
+letsencrypt_certs:
+  - domains:
+      - 'hello-world.hopto.org'
+letsencrypt_default_domain: "hello-world.hopto.org"
+letsencrypt_haproxy_certs:
+  - '{{ letsencrypt_default_domain }}.pem'
+letsencrypt_data_dir: "/etc/letsencrypt"
+letsencrypt_cert_dir: "{{ letsencrypt_data_dir }}/live/{{ letsencrypt_default_domain }}"
+haproxy_cert_dir: "/etc/haproxy/certs"
+letsencrypt_ssl_certificate: "{{ letsencrypt_cert_dir }}/fullchain.pem"
+letsencrypt_ssl_certificate_key: "{{ letsencrypt_cert_dir }}/privkey.pem"
+
+haproxy_domains:
+  - name: "{{ letsencrypt_default_domain }}"
