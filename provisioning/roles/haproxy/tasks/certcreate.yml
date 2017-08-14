@@ -1,46 +1,51 @@
 ---
-- name: CERTBOT | Chech if cert already exists
+- name: CERTBOT | Check if cert already exists
   stat:
-    path: /etc/letsencrypt/live/{{ letsencrypt_domain }}
+    path: "{{ letsencrypt_cert_dir }}"
   register: certdir
-    
-- assert:
+
+- name: CERTBOT | Verify prerequisites are defined    
+  assert:
     that:
-     - "letsencrypt_admin_email is defined"
      - "letsencrypt_certs is defined"
+     - "letsencrypt_default_domain is defined"
 
-- name: Create letsencrypt certs
-  shell: certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d {{ letsencrypt_domain }} --register-unsafely-without-email --agree-tos
-  with_items: "{{ letsencrypt_certs }}"
+- name: CERTBOT | Create letsencrypt certs
+  shell: certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d {{ letsencrypt_default_domain }} --register-unsafely-without-email --agree-tos
   when: not certdir.stat.isdir
-
-- set_fact:
+- name: HAPROXY | Set fact haproxy_certs
+  set_fact:
     haproxy_certs: "{{ letsencrypt_haproxy_certs }}"
 
 - name: HAPROXY | Create haproxy cert dir
   file:
-    path: /etc/haproxy/certs
+    path: "{{ haproxy_cert_dir }}"
+    state: directory
+
+- name: HAPROXY | Create temp folder to move fullchain and privatekey
+  file:
+    path: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}"
     state: directory
 
 - name: HAPROXY | Prepare to build HAProxy cert file
   copy:
-    src: /etc/letsencrypt/live/{{ letsencrypt_domain }}/fullchain.pem
-    dest: /etc/haproxy/certs/fullchain.pem
+    src: "{{ letsencrypt_ssl_certificate }}"
+    dest: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}/fullchain.pem"
     remote_src: true
 
 - name: HAPROXY | Prepare to build HAProxy cert file
   copy: 
-    src: /etc/letsencrypt/live/{{ letsencrypt_domain }}/privkey.pem
-    dest: /etc/haproxy/certs/privkey.pem
+    src: "{{ letsencrypt_ssl_certificate_key }}"
+    dest: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}/privkey.pem"
     remote_src: true
 
 - name: HAPROXY | Build HAProxy cert file
   assemble:
-    src: /etc/haproxy/certs/
-    dest: /etc/haproxy/certs/haproxy.pem
+    src: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}/"
+    dest: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}.pem"
     remote_src: true
 
 - name: HAPROXY | Set secure attributes to HAProxy cert file
   file:
-    path: /etc/haproxy/certs/{{ letsencrypt_domain }}.pem
+    path: "{{ haproxy_cert_dir }}/{{ letsencrypt_default_domain }}.pem"
     mode: 0600

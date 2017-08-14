@@ -8,7 +8,7 @@
 
 - name: CERTBOY | Ammend config for renewal
   lineinfile:
-    path: /etc/letsencrypt/renewal/{{ letsencrypt_domain }}.conf
+    path: "{{ letsencrypt_data_dir }}/renewal/{{ letsencrypt_default_domain }}.conf"
     regexp: '^http01_port'
     line: 'http01_port = 54321'
 

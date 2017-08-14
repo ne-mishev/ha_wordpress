@@ -1,4 +1,8 @@
-- yum: name={{ item }}
+---
+- name: CERTBOT | Install prerequisite packages
+  yum: 
+    name: "{{ item }}"
+    state: present
   ignore_errors: yes
   with_items:
     - epel-release
@@ -15,10 +19,12 @@
     - python-devel
     - libffi-devel
 
-- name: Add user {{ letsencrypt_user }}
+- name: CERTBOT | Add user {{ letsencrypt_user }}
   user:
     name: "{{ letsencrypt_user }}"
     shell: /bin/bash
 
-- name: Install Certbot
-  yum: name=certbot state=present
+- name: CERTBOT | Install Certbot
+  yum: 
+    name: certbot
+    state: present

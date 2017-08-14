@@ -4,14 +4,8 @@
   yum:
     name: haproxy
     state: latest
-  register: result
  
 - name: HAPROXY | Starting HAProxy
   service:
     name: haproxy
     state: started
-
-- name: HAPROXY | Good to go?
-  set_fact:
-    good_to_go: http
-  when: result|succeeded
