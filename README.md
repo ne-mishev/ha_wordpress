@@ -21,7 +21,7 @@ If you are going to run this on a Linux physical box/VM you can use the "prerequ
 
 [anon@centosbox ha_hello_world]$ ansible-playbook -i "localhost," -c local prerequisites/prep.yml
 
-"Prerequisite" playbook has been testeon on CentOS 7 and Debian 9. Naturally you need to have git and ansible installed before running it.
+"Prerequisite" playbook has been tested on CentOS 7 and Debian 9. Naturally you need to have git and ansible installed before running it.
 
 Once prerequisites are done, you need to change some variables and you are good to go:
 1. Edit provisioning/group_vars/all file with the desired IPs and Hostnames. This is not mandatory, the provisioning will work with the current values.
