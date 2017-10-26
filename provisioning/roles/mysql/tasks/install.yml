@@ -1,0 +1,23 @@
+---
+
+- name: MYSQL | Installing official repo
+  yum_repository:
+    name: MariaDB
+    description: Official MariaDB repository
+    baseurl: "http://yum.mariadb.org/10.3.2/centos7-amd64"
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: yes
+
+- name: MYSQL | Installing MySQL
+  ignore_errors: yes
+  yum: pkg={{ item }} state=present
+  with_items:
+    - MariaDB
+    - MariaDB-server
+    - MySQL-python
+
+- name: MYSQL | Starting MySQL
+  service:
+    name: mariadb
+    state: started
+    enabled: yes

@@ -1,0 +1,16 @@
+---
+
+- name: Remove the test database
+  mysql_db:
+    name: test
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: absent
+
+- name: Create user defined databases
+  mysql_db:
+    name: "{{ item.name }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: present
+  with_items: "{{ mariadb_databases }}"

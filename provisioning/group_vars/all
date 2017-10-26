@@ -2,8 +2,11 @@ ip:
   web1: 10.0.10.11
   web2: 10.0.10.12
   proxy1: 10.0.10.10
-
+  db1: 10.0.10.13
+  db2: 10.0.10.14
 hostname:
   web1: web-1
   web2: web-2
   proxy1: proxy-1
+  db1: db-1
+  db2: db-2

@@ -25,3 +25,11 @@
   become_method: sudo
   roles:
     - haproxy
+
+# Apply tasks to db servers
+- hosts: db
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - mysql
